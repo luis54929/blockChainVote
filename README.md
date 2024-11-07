@@ -37,6 +37,11 @@ Este proyecto permite a los usuarios votar "Sí" o "No" por una propuesta, auten
    npm run dev
    ```
 
+2. Despliega el contrato en la red de pruebas (si no está desplegado en Remix):
+   ```bash
+   npx hardhat run scripts/deploy.js --network fuji
+   ```
+
 ## Despliegue del Contrato
 
 El contrato inteligente está desplegado en Remix. Puedes interactuar con él utilizando la dirección del contrato y la ABI proporcionada en el código.
@@ -44,6 +49,36 @@ El contrato inteligente está desplegado en Remix. Puedes interactuar con él ut
 ## Autenticación del Voto
 
 Cada usuario firma un JSON con su elección usando su wallet. El hash de esta firma se envía al contrato inteligente para verificar la autenticidad del voto.
+
+Para ampliar esto, el proceso de autenticación y aseguramiento de la autenticidad del voto se realiza de la siguiente manera:
+
+1. **Generación del Mensaje**:
+   - El usuario selecciona su voto ("Sí" o "No") en el frontend.
+   - Se genera un JSON con la elección del usuario, la marca de tiempo y la dirección del votante:
+     ```json
+     {
+       "vote": true,
+       "timestamp": 1633024800000,
+       "voter": "0x1234...abcd"
+     }
+     ```
+
+2. **Firma del Mensaje**:
+   - El usuario firma este JSON utilizando la función `signMessage` de su wallet.
+   - La firma generada es única para cada usuario y mensaje.
+
+3. **Hash de la Firma**:
+   - El frontend calcula el hash de la firma utilizando `keccak256`.
+   - Este hash se envía al contrato inteligente junto con el voto.
+
+4. **Verificación en el Contrato**:
+   - El contrato inteligente recibe el voto y el hash de la firma.
+   - Verifica que la dirección del usuario no haya votado previamente utilizando el mapping `hasVoted`.
+   - Almacena el hash de la firma en el mapping `voteSignatureHash` para asegurar la autenticidad del voto.
+
+5. **Prevención de Votos Duplicados**:
+   - Cada dirección de usuario puede votar una sola vez. Intentos de votos duplicados son rechazados por el contrato.
+
 
 ## Contribuciones
 
