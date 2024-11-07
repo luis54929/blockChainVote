@@ -37,11 +37,6 @@ Este proyecto permite a los usuarios votar "Sí" o "No" por una propuesta, auten
    npm run dev
    ```
 
-2. Despliega el contrato en la red de pruebas (si no está desplegado en Remix):
-   ```bash
-   npx hardhat run scripts/deploy.js --network fuji
-   ```
-
 ## Despliegue del Contrato
 
 El contrato inteligente está desplegado en Remix. Puedes interactuar con él utilizando la dirección del contrato y la ABI proporcionada en el código.
